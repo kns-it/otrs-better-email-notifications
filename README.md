@@ -1,0 +1,1 @@
+# otrs-better-email-notifications
