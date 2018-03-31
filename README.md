@@ -1,1 +1,1 @@
-# otrs-better-email-notifications
+# OTRS - Better email notifications (BEN)
