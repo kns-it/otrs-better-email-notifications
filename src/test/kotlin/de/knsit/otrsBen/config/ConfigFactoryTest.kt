@@ -1,14 +1,7 @@
 package de.knsit.otrsBen.config
 
-import com.jdiazcano.cfg4k.providers.ConfigProvider
-import com.jdiazcano.cfg4k.providers.ProxyConfigProvider
-import com.jdiazcano.cfg4k.providers.bind
-import com.jdiazcano.cfg4k.sources.FileConfigSource
-import com.jdiazcano.cfg4k.yaml.YamlConfigLoader
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
 import java.io.File
 import kotlin.test.*
 
@@ -16,20 +9,17 @@ import kotlin.test.*
  * @author Peter Kurfer
  * Created on 4/1/18.
  */
-class ConfigLoadingTest {
+object ConfigFactoryTest {
 
-    private lateinit var provider: ConfigProvider
-
-    @BeforeEach
-    fun `load config file`() {
-        val loader = YamlConfigLoader(FileConfigSource(File(ConfigLoadingTest::class.java.getResource("/demo-config.yaml").path)))
-        provider = ProxyConfigProvider(loader)
+    @JvmStatic
+    @BeforeAll
+    fun setupFactory() {
+        ConfigFactory.load(File(ConfigLoadingTest::class.java.getResource("/demo-config.yaml").path))
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = ["database.ben", "database.otrs"])
-    fun `load database config`(configKey: String) {
-        val dbConfig = provider.bind<DbConfig>("database.ben")
+    @Test
+    fun `test get OTRS DB config`() {
+        val dbConfig = ConfigFactory.otrsDbConfig
 
         assertNotNull(dbConfig.jdbcUri)
         assertNotSame("", dbConfig.jdbcUri)
@@ -42,8 +32,32 @@ class ConfigLoadingTest {
     }
 
     @Test
-    fun `load LDAP config`() {
-        val ldapConfig = provider.bind<LdapConfig>("ldap")
+    fun `test OTRS DB laziness`() {
+        assertSame(ConfigFactory.otrsDbConfig, ConfigFactory.otrsDbConfig)
+    }
+
+    @Test
+    fun `test get BEN DB config`() {
+        val dbConfig = ConfigFactory.benDbConfig
+
+        assertNotNull(dbConfig.jdbcUri)
+        assertNotSame("", dbConfig.jdbcUri)
+
+        assertNotNull(dbConfig.username)
+        assertNotSame("", dbConfig.username)
+
+        assertNotNull(dbConfig.password)
+        assertNotSame("", dbConfig.password)
+    }
+
+    @Test
+    fun `test BEN DB config laziness`() {
+        assertSame(ConfigFactory.benDbConfig, ConfigFactory.benDbConfig)
+    }
+
+    @Test
+    fun `test get LDAP config`() {
+        val ldapConfig = ConfigFactory.ldapConfig
 
         assertNotNull(ldapConfig.baseDn)
         assertNotSame("", ldapConfig.baseDn)
@@ -62,8 +76,13 @@ class ConfigLoadingTest {
     }
 
     @Test
-    fun `load SMTP config`() {
-        val smtpConfig = provider.bind<SmtpConfig>("smtp")
+    fun `test LDAP config laziness`() {
+        assertSame(ConfigFactory.ldapConfig, ConfigFactory.ldapConfig)
+    }
+
+    @Test
+    fun `test get SMTP config`() {
+        val smtpConfig = ConfigFactory.smtpConfig
 
         assertNotNull(smtpConfig.senderAddress)
         assertNotSame("", smtpConfig.senderAddress)
@@ -87,13 +106,23 @@ class ConfigLoadingTest {
     }
 
     @Test
-    fun `test load template config`() {
-        val templateConfig = provider.bind<TemplateConfig>("template")
+    fun `test SMTP config laziness`() {
+        assertSame(ConfigFactory.smtpConfig, ConfigFactory.smtpConfig)
+    }
+
+    @Test
+    fun `test get template config`() {
+        val templateConfig = ConfigFactory.templateConfig
 
         assertNotNull(templateConfig.templateFolderPath)
         assertNotSame("", templateConfig.templateFolderPath)
 
         assertNotNull(templateConfig.templateName)
         assertNotSame("", templateConfig.templateName)
+    }
+
+    @Test
+    fun `test template config laziness`() {
+        assertSame(ConfigFactory.templateConfig, ConfigFactory.templateConfig)
     }
 }
