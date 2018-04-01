@@ -9,4 +9,9 @@ fi
 
 ./gradlew build
 WAR_FILE=$(find $"`pwd`/build/libs/" -name "*.war" | tac | tail -n 1)
-java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar $PAYARA_JAR --deploy $WAR_FILE
+java -Xdebug \
+     -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 \
+     --add-modules java.xml.bind \
+     --add-opens java.base/jdk.internal.loader=ALL-UNNAMED \
+     -jar $PAYARA_JAR \
+     --deploy $WAR_FILE
