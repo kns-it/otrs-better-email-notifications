@@ -1,0 +1,31 @@
+database:
+  otrs:
+    jdbcUri: "jdbc:postgres://localhost:5432/otrs-ben"
+    username: "otrs-ben"
+    password: "otrs-ben"
+  ben:
+    jdbcUri: "jdbc:postgres://localhost:5432/otrs-ben"
+    username: "otrs-ben"
+    password: "otrs-ben"
+ldap:
+  ldapUri: "ldap://host:389"
+  baseDn: "OU=Users"
+  bindDn: "cn=user,ou=someOu,dc=example,dc=loc"
+  bindPw: "s3cr3t"
+  userSearchFilter: "(&(objectClass=Person)(sAMAccountName=%s))"
+smtp:
+  senderAddress: "some.one@example.loc"
+  friendlySenderName: "Some One"
+  smtpHost: "smtp.example.loc"
+  smtpPort: 25
+  username: "smtpUser"
+  password: "s3cr3t"
+  useSSL: false
+  useCredentials: true
+template:
+  templateFolderPath: "/tmp"
+  templateName: "template.vm"
+scheduling:
+  hour: "*"
+  minute: "*"
+  second: "*/5"
