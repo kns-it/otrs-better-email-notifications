@@ -1,10 +1,14 @@
 package de.knsit.otrsBen
 
+import de.knsit.otrsBen.config.ConfigFactory
+import de.knsit.otrsBen.config.toScheduleExpression
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
-import javax.ejb.Schedule
+import javax.annotation.Resource
 import javax.ejb.Singleton
 import javax.ejb.Startup
+import javax.ejb.Timeout
+import javax.ejb.TimerService
 
 /**
  * @author Peter Kurfer
@@ -14,14 +18,17 @@ import javax.ejb.Startup
 @Singleton
 open class NotifySchedulerBean {
 
-    @Schedule(hour = "*", minute = "*", second = "*/5", info = "Checking for outstanding notifications to send")
-    fun checkForOutstandingNotifications() {
-        println("Checking for notifications to send")
-    }
+    @Resource
+    private var timerService: TimerService? = null
 
     @PostConstruct
     fun setup() {
-        println("Running setup...")
+        timerService?.createCalendarTimer(ConfigFactory.schedulerConfig.toScheduleExpression())
+    }
+
+    @Timeout
+    fun proceed() {
+        println("Proceeding...")
     }
 
     @PreDestroy

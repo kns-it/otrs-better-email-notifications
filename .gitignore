@@ -1,5 +1,9 @@
 .idea/
 build/
 .gradle/
-*.iml
 payara-micro.jar
+.classpath
+.project
+.settings/
+bin/
+out/

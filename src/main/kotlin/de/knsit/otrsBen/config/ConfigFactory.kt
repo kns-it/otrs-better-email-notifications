@@ -15,6 +15,17 @@ object ConfigFactory {
 
     private lateinit var provider: ConfigProvider
 
+    init {
+        val configFilePath = System.getenv("CONFIG_FILE_PATH")
+        if(configFilePath != null && !configFilePath.isEmpty()) {
+            val configFile = File(configFilePath)
+            if(configFile.exists() && configFile.isFile) {
+                val loader = YamlConfigLoader(FileConfigSource(configFile))
+                provider = ProxyConfigProvider(loader)
+            }
+        }
+    }
+
     fun load(configFilePath: File) {
         val loader = YamlConfigLoader(FileConfigSource(configFilePath))
         provider = ProxyConfigProvider(loader)
@@ -38,5 +49,9 @@ object ConfigFactory {
 
     val templateConfig: TemplateConfig by lazy {
         provider.bind<TemplateConfig>("template")
+    }
+
+    val schedulerConfig: SchedulerConfig by lazy {
+        provider.bind<SchedulerConfig>("scheduling")
     }
 }
